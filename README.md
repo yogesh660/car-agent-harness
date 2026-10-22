@@ -84,15 +84,16 @@ make eval
 
 ## Roadmap
 
-- [x] Agent with 3 tools, tests, CI, CLAUDE.md, eval set
-- [ ] Run evals in CI against a hosted model, track pass rate over time
-- [ ] RAG over car specs and reviews (pgvector)
-- [ ] Knowledge graph of makes/models/engines for graph-based retrieval
-- [ ] FastAPI service + Streamlit chat UI with a tool-call trace view
-- [ ] Docker image, Helm chart for Kubernetes
-- [ ] Tracing (Langfuse / OpenTelemetry), drift and hallucination checks
-- [ ] Fine-tuned small model for query-to-filter extraction vs. prompting
-- [ ] Changes made by coding agents from issues, linked here with what CI caught
+Full plan with stack choices and CI/CD design: [docs/ROADMAP.md](docs/ROADMAP.md).
+
+- [x] **M0** Agent with 3 tools, tests, CI, CLAUDE.md, eval set
+- [ ] **M1** Measured agent: 50+ eval cases, LLM-as-judge, MLflow tracking, nightly eval gate
+- [ ] **M2** Knowledge: Postgres + pgvector RAG, Neo4j knowledge graph, retrieval evals
+- [ ] **M3** Service: FastAPI, Streamlit trace UI, Docker images on GHCR
+- [ ] **M4** Kubernetes: Helm chart, vLLM, autoscaling, Grafana dashboards
+- [ ] **M5** Own model: LoRA fine-tune for query-to-filter, MLflow registry, gated promotion
+- [ ] **M6** Production monitoring: tracing, hallucination and drift checks
+- [ ] **M7** Coding agents working on this repo from issues, with results tracked
 
 ## Data
 
