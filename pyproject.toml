@@ -1,0 +1,66 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "car-agent-harness"
+version = "0.1.0"
+description = "LangGraph car marketplace agent with an agent-ready engineering harness."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Yogesh Awate" }]
+dependencies = [
+    "langgraph>=0.3",
+    "langchain>=0.3",
+    "langchain-core>=0.3",
+    "pydantic>=2.7",
+]
+
+[project.optional-dependencies]
+# Pick the provider you want to run the agent with (see README > Choosing a model).
+ollama = ["langchain-ollama>=0.2"]
+openai = ["langchain-openai>=0.2"]       # also used for vLLM's OpenAI-compatible server
+anthropic = ["langchain-anthropic>=0.3"]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pre-commit>=3.7",
+]
+
+[project.scripts]
+car-agent = "car_agent.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/car_agent"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "evals"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/car_agent/data/seed.py" = ["E501"]  # catalog is laid out as a table on purpose
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+addopts = "-q --strict-markers"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src"]
+
+# The LangGraph/LangChain public types are generic and change between releases.
+# The agent layer is a thin adapter, so it is checked with relaxed generics.
+[[tool.mypy.overrides]]
+module = ["car_agent.agent.*"]
+disallow_any_generics = false
+warn_return_any = false
+disallow_untyped_calls = false
