@@ -3,7 +3,7 @@
 Where this is going and in what order. Each milestone ends with something a person can open
 and look at (a dashboard, a URL, a PR), not just "code exists". Updated as milestones land.
 
-Status: **M0 done** (2026-10-22)
+Status: **M0 done** (2026-10-22) · **M1 code done** (2026-10-27), baselines pending
 
 ## Target architecture
 
@@ -58,12 +58,17 @@ Few tools, each doing one job. Adding a tool needs an ADR.
 Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, CI.
 
 ### M1 - Measured agent (week 2-3)
-- Switch to `uv`, commit `uv.lock`
-- First real eval run (local Ollama), pass rate in README
-- Grow eval set to 50+ cases, including multi-step and "should refuse/ask" cases
-- LLM-as-judge for answer faithfulness: every number in the answer must appear in a tool result
-- MLflow: log every eval run (model, prompt hash, pass rate, per-case results)
-- Nightly GitHub Action runs evals against a hosted model and fails on a drop of more than 5 points
+- [x] Switch to `uv` (dependency groups, `make setup` / `make lock`, uv in CI)
+- [ ] Commit `uv.lock` so CI installs with `--locked`
+- [x] Eval set grown to 56 cases in 9 categories, including multi-step, not-found, vague and
+  out-of-scope cases; 13 marked as the smoke set
+- [x] Number grounding check on every case: every number in the answer must come from a tool result
+- [x] LLM-as-judge for all other claims (opt-in, `--judge`)
+- [x] MLflow: every eval run logged with model, prompt/tool/case hashes, metrics and per-case results
+- [x] `eval.yml`: smoke set on PRs and on main when the agent changes, full set nightly, gate on a
+  drop of more than 5 points against `evals/baseline.json`, issue opened on nightly regression;
+  hosted model if `EVAL_API_KEY` is set, otherwise Ollama on the runner's CPU
+- [ ] First baselines recorded (smoke from CI, full from the first nightly run) and pass rates in README
 
 **Shows:** evaluation strategy, ground-truth datasets, regression gates
 

@@ -1,0 +1,131 @@
+# Runs the agent against the eval set with a real model.
+#
+# Model backend, in order of preference:
+#   1. a hosted OpenAI-compatible endpoint, if the EVAL_API_KEY secret is set
+#      (repo variables CAR_AGENT_MODEL and CAR_AGENT_BASE_URL choose model and endpoint)
+#   2. otherwise Ollama on the runner's CPU: free, slower, same default model as the README
+#
+# nightly        full set + gate against evals/baseline.json; opens an issue on regression
+# PRs / main     smoke set, only when agent, tools or evals change
+# manual         pick the suite
+
+name: eval
+
+on:
+  schedule:
+    - cron: "17 1 * * *"
+  pull_request:
+    paths:
+      - "src/car_agent/agent/**"
+      - "src/car_agent/tools/**"
+      - "src/car_agent/schemas.py"
+      - "evals/**"
+  push:
+    branches: [main]
+    paths:
+      - "src/car_agent/agent/**"
+      - "src/car_agent/tools/**"
+      - "src/car_agent/schemas.py"
+      - "evals/**"
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "full or smoke"
+        default: smoke
+        type: choice
+        options: [smoke, full]
+      judge:
+        description: "add LLM-as-judge check"
+        default: false
+        type: boolean
+
+concurrency:
+  group: eval-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    env:
+      HOSTED: ${{ secrets.EVAL_API_KEY != '' }}
+      OPENAI_API_KEY: ${{ secrets.EVAL_API_KEY }}
+      MLFLOW_TRACKING_URI: sqlite:///mlflow.db
+      OLLAMA_MODEL: qwen2.5:7b
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+          enable-cache: true
+
+      - name: install
+        run: |
+          if [ -f uv.lock ]; then uv sync --all-extras --locked; else uv sync --all-extras; fi
+
+      - name: choose model
+        run: |
+          if [ "$HOSTED" = "true" ]; then
+            echo "CAR_AGENT_MODEL=${{ vars.CAR_AGENT_MODEL || 'openai:gpt-4o-mini' }}" >> "$GITHUB_ENV"
+            if [ -n "${{ vars.CAR_AGENT_BASE_URL }}" ]; then
+              echo "CAR_AGENT_BASE_URL=${{ vars.CAR_AGENT_BASE_URL }}" >> "$GITHUB_ENV"
+            fi
+          else
+            echo "CAR_AGENT_MODEL=ollama:$OLLAMA_MODEL" >> "$GITHUB_ENV"
+          fi
+
+      - name: cache ollama model
+        if: env.HOSTED != 'true'
+        uses: actions/cache@v4
+        with:
+          path: ~/.ollama/models
+          key: ollama-${{ env.OLLAMA_MODEL }}
+
+      - name: start ollama
+        if: env.HOSTED != 'true'
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          # the installer starts a system service with its own model dir; use ours (cached)
+          sudo systemctl stop ollama || true
+          OLLAMA_MODELS=$HOME/.ollama/models nohup ollama serve > ollama.log 2>&1 &
+          for _ in $(seq 30); do curl -sf localhost:11434/api/version && break; sleep 1; done
+          OLLAMA_MODELS=$HOME/.ollama/models ollama pull "$OLLAMA_MODEL"
+
+      - name: run evals
+        run: |
+          SUITE=smoke
+          [ "${{ github.event_name }}" = "schedule" ] && SUITE=full
+          [ "${{ github.event_name }}" = "workflow_dispatch" ] && SUITE="${{ inputs.suite }}"
+          ARGS=""
+          [ "$SUITE" = "smoke" ] && ARGS="--smoke"
+          [ "${{ inputs.judge }}" = "true" ] && ARGS="$ARGS --judge"
+          # hosted free tiers rate-limit hard; a short pause between cases avoids most 429s
+          [ "$HOSTED" = "true" ] && ARGS="$ARGS --delay 2"
+          uv run python -m evals.run $ARGS
+
+      - name: upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: |
+            evals/results/latest.json
+            mlflow.db
+          if-no-files-found: ignore
+
+      - name: open issue on nightly regression
+        if: failure() && github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const run = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Nightly eval regression (${new Date().toISOString().slice(0, 10)})`,
+              body: `The nightly eval run failed its gate or crashed.\n\nRun: ${run}\n\nResults are attached to the run as the \`eval-results\` artifact.`,
+            });
