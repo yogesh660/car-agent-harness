@@ -30,9 +30,29 @@ MAKE_ALIASES = {
 }
 
 
+# German city names (users type them, models often keep them)
+CITY_ALIASES = {
+    "münchen": "Munich",
+    "muenchen": "Munich",
+    "köln": "Cologne",
+    "koeln": "Cologne",
+    "nürnberg": "Nuremberg",
+    "nuernberg": "Nuremberg",
+    "düsseldorf": "Dusseldorf",
+    "duesseldorf": "Dusseldorf",
+    "hannover": "Hanover",
+    "frankfurt am main": "Frankfurt",
+}
+
+
 def normalize_make(make: str) -> str:
     cleaned = make.strip()
     return MAKE_ALIASES.get(cleaned.lower(), cleaned)
+
+
+def normalize_city(city: str) -> str:
+    cleaned = city.strip()
+    return CITY_ALIASES.get(cleaned.lower(), cleaned)
 
 
 class Listing(BaseModel):

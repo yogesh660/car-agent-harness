@@ -50,6 +50,11 @@ def test_common_make_aliases(conn: sqlite3.Connection, alias, make):
     assert all(car.make == make for car in out.listings)
 
 
+@pytest.mark.parametrize("city", ["München", "muenchen", " Munich "])
+def test_german_city_names(conn: sqlite3.Connection, city):
+    assert search(conn, city=city) == search(conn, city="Munich")
+
+
 def test_model_matches_partial_name(conn: sqlite3.Connection):
     out = search(conn, model="octavia")
     assert out.total_matches > 0

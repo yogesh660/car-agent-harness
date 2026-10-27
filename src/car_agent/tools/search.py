@@ -7,7 +7,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
-from car_agent.schemas import Body, Fuel, Listing, Transmission, normalize_make
+from car_agent.schemas import Body, Fuel, Listing, Transmission, normalize_city, normalize_make
 
 SortBy = Literal["price_asc", "price_desc", "mileage_asc", "year_desc"]
 
@@ -79,7 +79,7 @@ def search_listings(conn: sqlite3.Connection, params: SearchListingsInput) -> Se
         args.append(f"%{_escape_like(params.model.strip())}%")
     if params.city:
         clauses.append("city = ? COLLATE NOCASE")
-        args.append(params.city.strip())
+        args.append(normalize_city(params.city))
     for column, value in (
         ("fuel", params.fuel),
         ("body", params.body),
