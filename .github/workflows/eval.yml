@@ -6,7 +6,7 @@
 #   2. otherwise Ollama on the runner's CPU: free, slower, same default model as the README
 #
 # nightly        full set + gate against evals/baseline.json; opens an issue on regression
-# PRs / main     smoke set, only when agent, tools or evals change
+# branches/main smoke set on feature/fix branches and main, only when agent, tools or evals change
 # manual         pick the suite
 
 name: eval
@@ -21,7 +21,7 @@ on:
       - "src/car_agent/schemas.py"
       - "evals/**"
   push:
-    branches: [main]
+    branches: [main, "feature/**", "fix/**"]
     paths:
       - "src/car_agent/agent/**"
       - "src/car_agent/tools/**"
