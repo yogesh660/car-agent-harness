@@ -1,272 +1,280 @@
-<!doctype html>
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#070709">
-  <title>Car Marketplace Agent · Case study · Yogesh Awate</title>
-  <meta name="description" content="A grounded LangGraph agent for a used-car marketplace, with an evaluation gate and a repository built for coding agents. Case study by Yogesh Awate.">
-  <meta property="og:title" content="Car Marketplace Agent · Case study">
-  <meta property="og:description" content="Grounded answers, measured changes, and a repo coding agents can work in safely.">
-  <meta property="og:type" content="article">
-  <meta property="og:url" content="https://yogesh660.github.io/car-agent-harness/">
-  <link rel="canonical" href="https://yogesh660.github.io/car-agent-harness/">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070709'/%3E%3Ctext x='8' y='43' font-family='Arial' font-weight='700' font-size='30' fill='%23f5f5f7'%3EYA%3C/text%3E%3Ccircle cx='55' cy='40' r='4' fill='%238c7cff'/%3E%3C/svg%3E">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="#070709" name="theme-color"/>
+<title>Car Marketplace Agent · Case study · Yogesh Awate</title>
+<meta content="A grounded LangGraph agent for a used-car marketplace, with an evaluation gate and a repository built for coding agents. Case study by Yogesh Awate." name="description"/>
+<meta content="Car Marketplace Agent · Case study" property="og:title"/>
+<meta content="Grounded answers, measured changes, and a repo coding agents can work in safely." property="og:description"/>
+<meta content="article" property="og:type"/>
+<meta content="https://yogesh660.github.io/car-agent-harness/" property="og:url"/>
+<link href="https://yogesh660.github.io/car-agent-harness/" rel="canonical"/>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070709'/%3E%3Ctext x='8' y='43' font-family='Arial' font-weight='700' font-size='30' fill='%23f5f5f7'%3EYA%3C/text%3E%3Ccircle cx='55' cy='40' r='4' fill='%238c7cff'/%3E%3C/svg%3E" rel="icon"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&amp;family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="style.css" rel="stylesheet"/>
+<script defer="" src="vendor/plotly-basic.min.js"></script>
+<script defer="" src="data.js"></script>
+<script defer="" src="chart-theme.js"></script>
+<script defer="" src="charts.js"></script>
 </head>
 <body>
-<div class="atmosphere" aria-hidden="true"><i></i><i></i><i></i></div>
-
+<div aria-hidden="true" class="atmosphere"><i></i><i></i><i></i></div>
 <nav id="nav">
-  <a class="mark" href="https://yogesh660.github.io/Yogesh_Awate/" title="Back to portfolio"><b>YA<span>.</span></b><small>/ Case study</small></a>
-  <div class="navlinks" id="navlinks">
-    <a href="#overview">Overview</a>
-    <a href="#approach">Approach</a>
-    <a href="#architecture">Architecture</a>
-    <a href="#stack">Stack</a>
-    <a href="#results">Results</a>
-    <a href="#roadmap">Roadmap</a>
-    <a class="pill" href="https://github.com/yogesh660/car-agent-harness">GitHub
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
-  </div>
-  <button class="menu" id="menu" aria-label="Menu" aria-expanded="false">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
-  </button>
+<a class="mark" href="https://yogesh660.github.io/Yogesh_Awate/" title="Back to portfolio"><b>YA<span>.</span></b><small>/ Case study</small></a>
+<div class="navlinks" id="navlinks">
+<a href="#overview">Overview</a>
+<a href="#approach">Approach</a>
+<a href="#architecture">Architecture</a>
+<a href="#stack">Stack</a>
+<a href="#results">Results</a>
+<a href="#roadmap">Roadmap</a>
+<a class="pill" href="https://github.com/yogesh660/car-agent-harness">GitHub
+      <svg fill="none" height="14" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" viewbox="0 0 24 24" width="14"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a>
+</div>
+<button aria-expanded="false" aria-label="Menu" class="menu" id="menu">
+<svg fill="none" height="22" stroke="currentColor" stroke-linecap="round" stroke-width="1.6" viewbox="0 0 24 24" width="22"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+</button>
 </nav>
-
 <main id="top">
-  <section class="hero">
-    <div class="reveal">
-      <p class="eyebrow"><i></i>Case study · Agentic AI · Evaluation</p>
-      <h1>Car marketplace<br><span class="grad">agent.</span></h1>
-      <p class="lede">A shopping assistant that answers only from the listings data, a test suite that
+<section class="hero">
+<div class="reveal">
+<p class="eyebrow"><i></i>Case study · Agentic AI · Evaluation</p>
+<h1>Car marketplace<br/><span class="grad">agent.</span></h1>
+<p class="lede">A shopping assistant that answers only from the listings data, a test suite that
         proves it, and a repository built so coding agents can change it without breaking it.</p>
-      <div class="actions">
-        <a class="button light" href="https://github.com/yogesh660/car-agent-harness">View repository
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
-        <a class="button ghost" href="#architecture">See the architecture</a>
-      </div>
-    </div>
-    <aside class="glass factsheet reveal" aria-label="Project facts">
-      <h2>Project facts</h2>
-      <dl>
-        <dt>Domain</dt><dd>Online car marketplace, buyer assistance</dd>
-        <dt>Type</dt><dd>Independent R&amp;D project, end-to-end reference build</dd>
-        <dt>My role</dt><dd>Architecture, implementation, evaluation design</dd>
-        <dt>Status</dt><dd><span class="status">M1 of 7 · evaluation gate live</span></dd>
-        <dt>Core stack</dt><dd><div class="chips"><span>LangGraph</span><span>Python</span><span>pydantic</span><span>MLflow</span><span>uv</span><span>GitHub Actions</span></div></dd>
-      </dl>
-    </aside>
-  </section>
-
-  <section class="band" id="overview">
-    <div class="section">
-      <div class="head reveal">
-        <div><span class="tag">01 / The problem</span><h2>Buyers think in<br>sentences.</h2></div>
-        <p>Marketplace search speaks in filters. A chat assistant closes that gap, but only if it can be trusted.</p>
-      </div>
-      <div class="split">
-        <p class="big reveal">"A diesel estate under 15,000 with low mileage near Munich." "Is this one overpriced?" <em>Today the buyer translates that into a dozen filters, and price judgement is a gut feeling.</em></p>
-        <div class="body reveal">
-          <p>An LLM assistant looks like the obvious fix. It brings two problems a marketplace can't ship with:</p>
-          <p><strong>It makes things up.</strong> An invented listing, price or "fair deal" verdict is worse than no assistant, because the buyer acts on it.</p>
-          <p><strong>It is hard to change safely.</strong> Prompts, tools and models change weekly, more and more often through coding agents. Without measurement, every change is a guess and quality drifts unnoticed.</p>
-          <div class="stats">
-            <div><strong>3</strong><span>DATA TOOLS</span></div>
-            <div><strong>56</strong><span>GROUND-TRUTH QUESTIONS</span></div>
-            <div><strong>100%</strong><span>ANSWERS GROUNDED (SMOKE)</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="approach">
-    <div class="head reveal">
-      <div><span class="tag">02 / Approach</span><h2>Three moves.</h2></div>
-      <p>Grounding, measurement and a repo that agents can work in. Each one addresses a specific way this kind of system fails.</p>
-    </div>
-    <div class="cards">
-      <article class="card reveal">
-        <span class="n">01</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/></svg>
-        <h3>Answer only from data</h3>
-        <p>The LLM never answers from memory. It turns a question into calls to typed tools that read the listings database: search, price estimate from comparable cars, side-by-side comparison. Unknown arguments are rejected, not ignored.</p>
-      </article>
-      <article class="card reveal">
-        <span class="n">02</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
-        <h3>Measure every change</h3>
-        <p>56 ground-truth questions check that the right tools were called with the right arguments, and that every price, mileage and listing id in the answer came from a tool result. A regression blocks the change.</p>
-      </article>
-      <article class="card reveal">
-        <span class="n">03</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="18" r="3"/><circle cx="6" cy="6" r="3"/><path d="M13 6h3a2 2 0 0 1 2 2v7"/><path d="M6 9v12"/></svg>
-        <h3>A repo built for agents</h3>
-        <p>Written rules (CLAUDE.md), one command for everything, decision records and tests that check the repository itself, so a coding agent can make a change, prove it's safe and open a reviewable PR.</p>
-      </article>
-    </div>
-  </section>
-
-  <section class="band" id="architecture">
-    <div class="section">
-      <div class="head reveal">
-        <div><span class="tag">03 / Architecture</span><h2>Models propose,<br>code decides.</h2></div>
-        <p>The language model chooses which tool to call and how to phrase the answer. Every fact comes from deterministic, tested code.</p>
-      </div>
-      <div class="glass diagram reveal">
-        <div class="diagram-title"><span class="tag">Request flow</span><span class="chip">LangGraph · step budget 8</span></div>
-        <div class="flow">
-          <div class="node out"><small>Input</small><strong>Buyer question</strong><span>"Is listing #42 a good deal?"</span></div>
-          <div class="arrow" aria-hidden="true"></div>
-          <div class="node ai"><small>Agent node</small><strong>LLM + tool schemas</strong><span>picks tools and arguments; any provider: Ollama, OpenAI-compatible, vLLM</span></div>
-          <div class="arrow" aria-hidden="true"></div>
-          <div class="node code"><small>Tool layer</small><strong>Typed tools</strong><span>search_listings · estimate_price · compare_listings, pydantic in and out</span></div>
-          <div class="arrow" aria-hidden="true"></div>
-          <div class="node data"><small>Data</small><strong>Listings DB</strong><span>read-only connection, parameterised SQL only</span></div>
-          <div class="arrow" aria-hidden="true"></div>
-          <div class="node ai"><small>Answer</small><strong>Grounded reply</strong><span>cites listing ids; every number traceable to a tool result</span></div>
-        </div>
-        <div class="flow-note"><b class="k-ai">Model</b><b class="k-code">Deterministic code</b><b class="k-data">Data</b></div>
-      </div>
-      <ol class="steps reveal">
-        <li><div><strong>The agent reads the question</strong> together with the JSON schemas of the three tools, and decides what to call.</div></li>
-        <li><div><strong>Tools validate their input.</strong> A made-up argument is an error the model sees and corrects, not something silently dropped.</div></li>
-        <li><div><strong>Price estimates are statistics, not opinions:</strong> the median of comparable cars, loosening the match until at least five exist, with a 25th-75th percentile band.</div></li>
-        <li><div><strong>The loop has a hard step budget,</strong> so a confused model stops with a clear message instead of spinning.</div></li>
-      </ol>
-    </div>
-  </section>
-
-  <section class="section" id="principles">
-    <div class="head reveal">
-      <div><span class="tag">04 / Design principles</span><h2>Decisions,<br>written down.</h2></div>
-      <p>The reasoning behind each lives in the repository's decision records, next to the code.</p>
-    </div>
-    <div class="principles reveal">
-      <div class="principle"><span>01</span><div><h3>Models propose, code decides</h3><p>Facts, prices and verdicts come only from tested code. The model's job is choosing tools and writing the answer.</p></div></div>
-      <div class="principle"><span>02</span><div><h3>Measure before you change</h3><p>No prompt, tool or model change goes in on a hunch. A prompt tweak that looked like a fix but lowered tool accuracy was reverted.</p></div></div>
-      <div class="principle"><span>03</span><div><h3>Fail loudly</h3><p>Unknown tool arguments are rejected; an answer with an untraceable number fails the eval; a nightly regression opens an issue.</p></div></div>
-      <div class="principle"><span>04</span><div><h3>Portable by default</h3><p>The model is an environment variable, the database a connection string, the service a container. Cloud choice stays a cost decision.</p></div></div>
-    </div>
-    <div class="tradeoffs reveal">
-      <div class="tradeoff"><small>Trade-off</small><h4>Synthetic data</h4><p>2,500 generated listings keep the project self-contained and evals stable. Real data is a loader away.</p></div>
-      <div class="tradeoff"><small>Trade-off</small><h4>Strict scoring</h4><p>A different but reasonable filter counts as a failure. Accepted for stable, explainable numbers.</p></div>
-      <div class="tradeoff"><small>Trade-off</small><h4>Small model baseline</h4><p>Qwen 2.5 7B on CPU is free to run nightly and exposes real failure modes; larger models are one variable away.</p></div>
-      <div class="tradeoff"><small>Out of scope</small><h4>Not a product</h4><p>No accounts, payments or real listings. The point is grounding, evaluation and agent-ready engineering.</p></div>
-    </div>
-  </section>
-
-  <section class="band" id="stack">
-    <div class="section">
-      <div class="head reveal">
-        <div><span class="tag">05 / Tech stack</span><h2>Chosen for<br>a reason.</h2></div>
-        <p>Open source end to end, so it runs on a laptop, in CI and on any cloud. Dashed items are on the roadmap.</p>
-      </div>
-      <div class="layers reveal">
-        <div class="layer"><small>Experience</small><div class="chips"><span>CLI</span><span class="planned">FastAPI</span><span class="planned">Streamlit chat + trace view</span></div></div>
-        <div class="layer"><small>Agent</small><div class="chips"><span>LangGraph</span><span>LangChain chat models</span><span>Ollama · OpenAI-compatible · Anthropic</span><span class="planned">vLLM</span></div></div>
-        <div class="layer"><small>Tools &amp; logic</small><div class="chips"><span>Python</span><span>pydantic</span><span>comparable-sales pricing</span></div></div>
-        <div class="layer"><small>Knowledge &amp; data</small><div class="chips"><span>SQLite</span><span class="planned">Postgres + pgvector</span><span class="planned">Neo4j knowledge graph</span></div></div>
-        <div class="layer"><small>Quality</small><div class="chips"><span>Eval suite</span><span>number grounding</span><span>LLM-as-judge</span><span>MLflow</span></div></div>
-        <div class="layer"><small>Engineering</small><div class="chips"><span>uv</span><span>ruff</span><span>mypy strict</span><span>pytest</span><span>pre-commit</span><span>CLAUDE.md</span><span>ADRs</span></div></div>
-        <div class="layer"><small>Delivery</small><div class="chips"><span>GitHub Actions</span><span class="planned">Docker · GHCR</span><span class="planned">Helm · Kubernetes</span><span class="planned">Prometheus · Grafana</span></div></div>
-      </div>
-      <div class="legend"><span>Built</span><span class="p">Planned</span></div>
-
-      <div class="sub reveal"><h3>Why each choice</h3></div>
-      <div class="table-wrap reveal">
-        <table>
-          <thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
-          <tbody>
-            <tr><td>Agent framework</td><td><b>LangGraph</b>, graph written by hand</td><td>Explicit nodes and a step budget; every step can be tested and traced.</td></tr>
-            <tr><td>Tools</td><td><b>Plain Python + pydantic</b></td><td>Business logic doesn't depend on an agent framework; typed schemas are exactly what the model sees.</td></tr>
-            <tr><td>Model access</td><td><b>LangChain chat models</b></td><td>Swap Ollama, a hosted API or vLLM with one environment variable, no code change.</td></tr>
-            <tr><td>Data</td><td><b>SQLite</b> now, <b>Postgres + pgvector</b> next</td><td>Zero setup for development and tests; Postgres adds vector search without a separate vector database.</td></tr>
-            <tr><td>Knowledge graph</td><td><b>Neo4j</b> (planned)</td><td>Makes, models, engines and known issues form a graph; graph retrieval answers "which engines have this problem?".</td></tr>
-            <tr><td>Evaluation</td><td><b>Tool scoring + number grounding + LLM judge</b></td><td>Cheap deterministic checks on every change; the judge covers what rules can't.</td></tr>
-            <tr><td>Tracking</td><td><b>MLflow</b></td><td>One tool for eval history now, fine-tuning runs and the model registry later.</td></tr>
-            <tr><td>Engineering</td><td><b>uv, ruff, mypy, pytest</b></td><td>Fast, reproducible, checked; the same commands for people, agents and CI.</td></tr>
-            <tr><td>Delivery</td><td><b>GitHub Actions</b> → Docker, Helm, Kubernetes</td><td>CI on every push; evals on agent changes and nightly; portable deployment.</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="sub reveal"><h3>On GCP, AWS or Azure</h3><p>Everything runs anywhere Kubernetes runs. If a team prefers managed services, these are the closest equivalents. The code doesn't change.</p></div>
-      <div class="table-wrap reveal">
-        <table class="cloud">
-          <thead><tr><th>Need</th><th>Open source</th><th>Google Cloud</th><th>AWS</th><th>Azure</th></tr></thead>
-          <tbody>
-            <tr><td>LLM</td><td>vLLM on Kubernetes</td><td>Gemini, or vLLM on Vertex AI (Gemini Enterprise Agent Platform)</td><td>Amazon Bedrock, or vLLM on SageMaker AI</td><td>Azure OpenAI / Microsoft Foundry models</td></tr>
-            <tr><td>Agent runtime</td><td>LangGraph in a container</td><td>Vertex AI Agent Engine, or Cloud Run</td><td>Bedrock AgentCore Runtime, or ECS on Fargate</td><td>Foundry Agent Service, or Container Apps</td></tr>
-            <tr><td>Listings + vectors</td><td>Postgres + pgvector</td><td>Cloud SQL / AlloyDB</td><td>RDS / Aurora PostgreSQL</td><td>Azure Database for PostgreSQL</td></tr>
-            <tr><td>Knowledge graph</td><td>Neo4j</td><td>Neo4j AuraDB, or Spanner Graph</td><td>Amazon Neptune, or Neo4j AuraDB</td><td>Neo4j AuraDB, or Cosmos DB (Gremlin)</td></tr>
-            <tr><td>Tracking</td><td>MLflow</td><td>Vertex AI Experiments</td><td>SageMaker AI managed MLflow</td><td>Azure Machine Learning (MLflow)</td></tr>
-            <tr><td>Kubernetes</td><td>Helm chart</td><td>GKE</td><td>EKS</td><td>AKS</td></tr>
-            <tr><td>Monitoring</td><td>Prometheus + Grafana</td><td>Managed Prometheus, Cloud Monitoring</td><td>Managed Prometheus + Grafana, CloudWatch</td><td>Azure Monitor + Managed Grafana</td></tr>
-            <tr><td>Secrets</td><td>Kubernetes secrets</td><td>Secret Manager</td><td>Secrets Manager</td><td>Key Vault</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="results">
-    <div class="head reveal">
-      <div><span class="tag">06 / Results</span><h2>What the numbers<br>say so far.</h2></div>
-      <p>Smoke suite, Qwen 2.5 7B on a GitHub Actions CPU runner, temperature 0. Identical across three runs.</p>
-    </div>
-    <div class="kpis reveal">
-      <div class="kpi"><small>Pass rate</small><strong>69%</strong><span>all checks pass on a question</span></div>
-      <div class="kpi"><small>Right tools</small><strong>100%</strong><span>expected tools were called</span></div>
-      <div class="kpi"><small>Right arguments</small><strong>85%</strong><span>filters match the question</span></div>
-      <div class="kpi"><small>Grounded</small><strong>100%</strong><span>every number traced to data</span></div>
-    </div>
-    <p class="note reveal">Full 56-question suite runs nightly; its baseline and trend charts will be added here.</p>
-    <div class="findings reveal">
-      <div class="finding"><span class="badge fixed">Fixed</span><div><h4>Silently ignored arguments</h4><p>The model passed <code>year=2020</code>, which isn't an argument. It was dropped without an error, so the model believed it had filtered by year. Tool inputs now reject unknown arguments, and a repository check keeps it that way.</p></div></div>
-      <div class="finding"><span class="badge open">Open</span><div><h4>Invented filters</h4><p>For "automatic SUV, 2020 or newer, max 30k" the model adds a make and model the user never asked for.</p></div></div>
-      <div class="finding"><span class="badge open">Open</span><div><h4>Dropped asking price</h4><p>"Seller wants 18,500 ... fair price?" gets an estimate but no verdict, because the asking price isn't passed on.</p></div></div>
-      <div class="finding"><span class="badge learned">Learned</span><div><h4>Prompt rules are not free</h4><p>Rules that fixed the asking price made the model skip the price tool elsewhere; tool accuracy fell from 100% to 92%. Reverted. The next lever is a stronger model or a router, not rules tuned on 13 questions.</p></div></div>
-    </div>
-    <div class="placeholder reveal">TREND CHARTS · NIGHTLY PASS RATE · MODEL COMPARISON — COMING WITH M2</div>
-  </section>
-
-  <section class="band" id="roadmap">
-    <div class="section">
-      <div class="head reveal">
-        <div><span class="tag">07 / Roadmap</span><h2>Where it's going.</h2></div>
-        <p>Every milestone ends with something you can open: numbers, a dashboard, a URL or a pull request.</p>
-      </div>
-      <div class="timeline">
-        <article class="mile reveal"><div class="m">M0</div><span class="st done">Done</span><div><h3>Foundation</h3><p>Agent with three tools, synthetic data, CLAUDE.md, repository self-checks, CI.</p></div></article>
-        <article class="mile reveal"><div class="m">M1</div><span class="st now">Finishing</span><div><h3>Measured agent</h3><p>56-question eval suite, number grounding, LLM judge, MLflow tracking, PR and nightly eval gate. Full-suite baseline pending.</p></div></article>
-        <article class="mile reveal"><div class="m">M2</div><span class="st">Next</span><div><h3>Knowledge integration</h3><p>Postgres with pgvector for RAG over specs and reviews, a Neo4j knowledge graph, retrieval evals.</p><div class="chips"><span>pgvector</span><span>hybrid search</span><span>Neo4j</span></div></div></article>
-        <article class="mile reveal"><div class="m">M3</div><span class="st">Planned</span><div><h3>Service</h3><p>FastAPI with streaming, a chat UI that shows every tool call, Docker images on GHCR.</p></div></article>
-        <article class="mile reveal"><div class="m">M4</div><span class="st">Planned</span><div><h3>Kubernetes</h3><p>Helm chart, vLLM serving, autoscaling on queue length, Grafana dashboards for latency and cost per query.</p></div></article>
-        <article class="mile reveal"><div class="m">M5</div><span class="st">Planned</span><div><h3>Own model</h3><p>LoRA fine-tune for query-to-filter extraction vs prompting, tracked in the MLflow registry with gated promotion.</p></div></article>
-        <article class="mile reveal"><div class="m">M6</div><span class="st">Planned</span><div><h3>Production monitoring</h3><p>Tracing, online hallucination and drift checks, German-language queries.</p></div></article>
-        <article class="mile reveal"><div class="m">M7</div><span class="st">Planned</span><div><h3>Agents on the repository</h3><p>Coding agents pick up scoped issues; merge rate and what CI caught are tracked and published.</p></div></article>
-      </div>
-    </div>
-  </section>
-
-  <section class="closing">
-    <p class="tag reveal">Explore the build</p>
-    <h2 class="reveal">Grounded answers.<br><span>Measured changes.</span></h2>
-    <div class="actions reveal">
-      <a class="button light" href="https://github.com/yogesh660/car-agent-harness">Read the code
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
-      <a class="button ghost" href="https://yogesh660.github.io/Yogesh_Awate/">Back to portfolio</a>
-    </div>
-  </section>
+<div class="actions">
+<a class="button light" href="https://github.com/yogesh660/car-agent-harness">View repository
+          <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="16"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a>
+<a class="button ghost" href="#architecture">See the architecture</a>
+</div>
+</div>
+<aside aria-label="Project facts" class="glass factsheet reveal">
+<h2>Project facts</h2>
+<dl>
+<dt>Domain</dt><dd>Online car marketplace, buyer assistance</dd>
+<dt>Type</dt><dd>Independent R&amp;D project, end-to-end reference build</dd>
+<dt>My role</dt><dd>Architecture, implementation, evaluation design</dd>
+<dt>Status</dt><dd><span class="status">M1 of 7 · evaluation gate live</span></dd>
+<dt>Core stack</dt><dd><div class="chips"><span>LangGraph</span><span>Python</span><span>pydantic</span><span>MLflow</span><span>uv</span><span>GitHub Actions</span></div></dd>
+</dl>
+</aside>
+</section>
+<section class="band" id="overview">
+<div class="section">
+<div class="head reveal">
+<div><span class="tag">01 / The problem</span><h2>Buyers think in<br/>sentences.</h2></div>
+<p>Marketplace search speaks in filters. A chat assistant closes that gap, but only if it can be trusted.</p>
+</div>
+<div class="split">
+<p class="big reveal">"A diesel estate under 15,000 with low mileage near Munich." "Is this one overpriced?" <em>Today the buyer translates that into a dozen filters, and price judgement is a gut feeling.</em></p>
+<div class="body reveal">
+<p>An LLM assistant looks like the obvious fix. It brings two problems a marketplace can't ship with:</p>
+<p><strong>It makes things up.</strong> An invented listing, price or "fair deal" verdict is worse than no assistant, because the buyer acts on it.</p>
+<p><strong>It is hard to change safely.</strong> Prompts, tools and models change weekly, more and more often through coding agents. Without measurement, every change is a guess and quality drifts unnoticed.</p>
+<div class="stats">
+<div><strong>3</strong><span>DATA TOOLS</span></div>
+<div><strong>56</strong><span>GROUND-TRUTH QUESTIONS</span></div>
+<div><strong>100%</strong><span>ANSWERS GROUNDED (SMOKE)</span></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="approach">
+<div class="head reveal">
+<div><span class="tag">02 / Approach</span><h2>Three moves.</h2></div>
+<p>Grounding, measurement and a repo that agents can work in. Each one addresses a specific way this kind of system fails.</p>
+</div>
+<div class="cards">
+<article class="card reveal">
+<span class="n">01</span>
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14a9 3 0 0 0 18 0V5"></path><path d="M3 12a9 3 0 0 0 18 0"></path></svg>
+<h3>Answer only from data</h3>
+<p>The LLM never answers from memory. It turns a question into calls to typed tools that read the listings database: search, price estimate from comparable cars, side-by-side comparison. Unknown arguments are rejected, not ignored.</p>
+</article>
+<article class="card reveal">
+<span class="n">02</span>
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"></path><path d="m9 12 2 2 4-4"></path></svg>
+<h3>Measure every change</h3>
+<p>56 ground-truth questions check that the right tools were called with the right arguments, and that every price, mileage and listing id in the answer came from a tool result. A regression blocks the change.</p>
+</article>
+<article class="card reveal">
+<span class="n">03</span>
+<svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" viewbox="0 0 24 24"><circle cx="18" cy="18" r="3"></circle><circle cx="6" cy="6" r="3"></circle><path d="M13 6h3a2 2 0 0 1 2 2v7"></path><path d="M6 9v12"></path></svg>
+<h3>A repo built for agents</h3>
+<p>Written rules (CLAUDE.md), one command for everything, decision records and tests that check the repository itself, so a coding agent can make a change, prove it's safe and open a reviewable PR.</p>
+</article>
+</div>
+</section>
+<section class="band" id="architecture">
+<div class="section">
+<div class="head reveal">
+<div><span class="tag">03 / Architecture</span><h2>Models propose,<br/>code decides.</h2></div>
+<p>The language model chooses which tool to call and how to phrase the answer. Every fact comes from deterministic, tested code.</p>
+</div>
+<figure class="figure reveal">
+<picture>
+<source media="(max-width: 700px)" srcset="img/architecture-tall.svg"/>
+<img alt="Architecture: clients call a LangGraph agent; the agent node uses an LLM to choose tools; a ToolNode validates arguments and calls three Python tools that read a read-only listings database; evals, MLflow and GitHub Actions measure and ship every change." height="700" loading="lazy" src="img/architecture-wide.svg" width="1240"/>
+</picture>
+<figcaption>System view. Solid boxes run today; dashed boxes are on the roadmap. Generated from code by <code>make site</code>.</figcaption>
+</figure>
+<ol class="steps reveal">
+<li><div><strong>The agent reads the question</strong> together with the JSON schemas of the three tools, and decides what to call.</div></li>
+<li><div><strong>Tools validate their input.</strong> A made-up argument is an error the model sees and corrects, not something silently dropped.</div></li>
+<li><div><strong>Price estimates are statistics, not opinions:</strong> the median of comparable cars, loosening the match until at least five exist, with a 25th-75th percentile band.</div></li>
+<li><div><strong>The loop has a hard step budget,</strong> so a confused model stops with a clear message instead of spinning.</div></li>
+</ol>
+</div>
+</section>
+<section class="section" id="principles">
+<div class="head reveal">
+<div><span class="tag">04 / Design principles</span><h2>Decisions,<br/>written down.</h2></div>
+<p>The reasoning behind each lives in the repository's decision records, next to the code.</p>
+</div>
+<div class="principles reveal">
+<div class="principle"><span>01</span><div><h3>Models propose, code decides</h3><p>Facts, prices and verdicts come only from tested code. The model's job is choosing tools and writing the answer.</p></div></div>
+<div class="principle"><span>02</span><div><h3>Measure before you change</h3><p>No prompt, tool or model change goes in on a hunch. A prompt tweak that looked like a fix but lowered tool accuracy was reverted.</p></div></div>
+<div class="principle"><span>03</span><div><h3>Fail loudly</h3><p>Unknown tool arguments are rejected; an answer with an untraceable number fails the eval; a nightly regression opens an issue.</p></div></div>
+<div class="principle"><span>04</span><div><h3>Portable by default</h3><p>The model is an environment variable, the database a connection string, the service a container. Cloud choice stays a cost decision.</p></div></div>
+</div>
+<div class="tradeoffs reveal">
+<div class="tradeoff"><small>Trade-off</small><h4>Synthetic data</h4><p>2,500 generated listings keep the project self-contained and evals stable. Real data is a loader away.</p></div>
+<div class="tradeoff"><small>Trade-off</small><h4>Strict scoring</h4><p>A different but reasonable filter counts as a failure. Accepted for stable, explainable numbers.</p></div>
+<div class="tradeoff"><small>Trade-off</small><h4>Small model baseline</h4><p>Qwen 2.5 7B on CPU is free to run nightly and exposes real failure modes; larger models are one variable away.</p></div>
+<div class="tradeoff"><small>Out of scope</small><h4>Not a product</h4><p>No accounts, payments or real listings. The point is grounding, evaluation and agent-ready engineering.</p></div>
+</div>
+</section>
+<section class="band" id="stack">
+<div class="section">
+<div class="head reveal">
+<div><span class="tag">05 / Tech stack</span><h2>Chosen for<br/>a reason.</h2></div>
+<p>Open source end to end, so it runs on a laptop, in CI and on any cloud. Dashed items are on the roadmap.</p>
+</div>
+<div class="layers reveal">
+<div class="layer"><small>Experience</small><div class="chips"><span>CLI</span><span class="planned">FastAPI</span><span class="planned">Streamlit chat + trace view</span></div></div>
+<div class="layer"><small>Agent</small><div class="chips"><span>LangGraph</span><span>LangChain chat models</span><span>Ollama · OpenAI-compatible · Anthropic</span><span class="planned">vLLM</span></div></div>
+<div class="layer"><small>Tools &amp; logic</small><div class="chips"><span>Python</span><span>pydantic</span><span>comparable-sales pricing</span></div></div>
+<div class="layer"><small>Knowledge &amp; data</small><div class="chips"><span>SQLite</span><span class="planned">Postgres + pgvector</span><span class="planned">Neo4j knowledge graph</span></div></div>
+<div class="layer"><small>Quality</small><div class="chips"><span>Eval suite</span><span>number grounding</span><span>LLM-as-judge</span><span>MLflow</span></div></div>
+<div class="layer"><small>Engineering</small><div class="chips"><span>uv</span><span>ruff</span><span>mypy strict</span><span>pytest</span><span>pre-commit</span><span>CLAUDE.md</span><span>ADRs</span></div></div>
+<div class="layer"><small>Delivery</small><div class="chips"><span>GitHub Actions</span><span class="planned">Docker · GHCR</span><span class="planned">Helm · Kubernetes</span><span class="planned">Prometheus · Grafana</span></div></div>
+</div>
+<div class="legend"><span>Built</span><span class="p">Planned</span></div>
+<div class="sub reveal"><h3>Why each choice</h3></div>
+<div class="table-wrap reveal">
+<table>
+<thead><tr><th>Layer</th><th>Choice</th><th>Why</th></tr></thead>
+<tbody>
+<tr><td data-label="Layer">Agent framework</td><td data-label="Choice"><b>LangGraph</b>, graph written by hand</td><td data-label="Why">Explicit nodes and a step budget; every step can be tested and traced.</td></tr>
+<tr><td data-label="Layer">Tools</td><td data-label="Choice"><b>Plain Python + pydantic</b></td><td data-label="Why">Business logic doesn't depend on an agent framework; typed schemas are exactly what the model sees.</td></tr>
+<tr><td data-label="Layer">Model access</td><td data-label="Choice"><b>LangChain chat models</b></td><td data-label="Why">Swap Ollama, a hosted API or vLLM with one environment variable, no code change.</td></tr>
+<tr><td data-label="Layer">Data</td><td data-label="Choice"><b>SQLite</b> now, <b>Postgres + pgvector</b> next</td><td data-label="Why">Zero setup for development and tests; Postgres adds vector search without a separate vector database.</td></tr>
+<tr><td data-label="Layer">Knowledge graph</td><td data-label="Choice"><b>Neo4j</b> (planned)</td><td data-label="Why">Makes, models, engines and known issues form a graph; graph retrieval answers "which engines have this problem?".</td></tr>
+<tr><td data-label="Layer">Evaluation</td><td data-label="Choice"><b>Tool scoring + number grounding + LLM judge</b></td><td data-label="Why">Cheap deterministic checks on every change; the judge covers what rules can't.</td></tr>
+<tr><td data-label="Layer">Tracking</td><td data-label="Choice"><b>MLflow</b></td><td data-label="Why">One tool for eval history now, fine-tuning runs and the model registry later.</td></tr>
+<tr><td data-label="Layer">Engineering</td><td data-label="Choice"><b>uv, ruff, mypy, pytest</b></td><td data-label="Why">Fast, reproducible, checked; the same commands for people, agents and CI.</td></tr>
+<tr><td data-label="Layer">Delivery</td><td data-label="Choice"><b>GitHub Actions</b> → Docker, Helm, Kubernetes</td><td data-label="Why">CI on every push; evals on agent changes and nightly; portable deployment.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="sub reveal"><h3>On GCP, AWS or Azure</h3><p>Everything runs anywhere Kubernetes runs. If a team prefers managed services, these are the closest equivalents. The code doesn't change.</p></div>
+<div class="table-wrap reveal">
+<table class="cloud">
+<thead><tr><th>Need</th><th>Open source</th><th>Google Cloud</th><th>AWS</th><th>Azure</th></tr></thead>
+<tbody>
+<tr><td data-label="Need">LLM</td><td data-label="Open source">vLLM on Kubernetes</td><td data-label="Google Cloud">Gemini, or vLLM on Vertex AI (Gemini Enterprise Agent Platform)</td><td data-label="AWS">Amazon Bedrock, or vLLM on SageMaker AI</td><td data-label="Azure">Azure OpenAI / Microsoft Foundry models</td></tr>
+<tr><td data-label="Need">Agent runtime</td><td data-label="Open source">LangGraph in a container</td><td data-label="Google Cloud">Vertex AI Agent Engine, or Cloud Run</td><td data-label="AWS">Bedrock AgentCore Runtime, or ECS on Fargate</td><td data-label="Azure">Foundry Agent Service, or Container Apps</td></tr>
+<tr><td data-label="Need">Listings + vectors</td><td data-label="Open source">Postgres + pgvector</td><td data-label="Google Cloud">Cloud SQL / AlloyDB</td><td data-label="AWS">RDS / Aurora PostgreSQL</td><td data-label="Azure">Azure Database for PostgreSQL</td></tr>
+<tr><td data-label="Need">Knowledge graph</td><td data-label="Open source">Neo4j</td><td data-label="Google Cloud">Neo4j AuraDB, or Spanner Graph</td><td data-label="AWS">Amazon Neptune, or Neo4j AuraDB</td><td data-label="Azure">Neo4j AuraDB, or Cosmos DB (Gremlin)</td></tr>
+<tr><td data-label="Need">Tracking</td><td data-label="Open source">MLflow</td><td data-label="Google Cloud">Vertex AI Experiments</td><td data-label="AWS">SageMaker AI managed MLflow</td><td data-label="Azure">Azure Machine Learning (MLflow)</td></tr>
+<tr><td data-label="Need">Kubernetes</td><td data-label="Open source">Helm chart</td><td data-label="Google Cloud">GKE</td><td data-label="AWS">EKS</td><td data-label="Azure">AKS</td></tr>
+<tr><td data-label="Need">Monitoring</td><td data-label="Open source">Prometheus + Grafana</td><td data-label="Google Cloud">Managed Prometheus, Cloud Monitoring</td><td data-label="AWS">Managed Prometheus + Grafana, CloudWatch</td><td data-label="Azure">Azure Monitor + Managed Grafana</td></tr>
+<tr><td data-label="Need">Secrets</td><td data-label="Open source">Kubernetes secrets</td><td data-label="Google Cloud">Secret Manager</td><td data-label="AWS">Secrets Manager</td><td data-label="Azure">Key Vault</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section class="section" id="results">
+<div class="head reveal">
+<div><span class="tag">06 / Results</span><h2>What the numbers<br/>say so far.</h2></div>
+<p>Smoke suite, Qwen 2.5 7B on a GitHub Actions CPU runner, temperature 0. Identical across three runs.</p>
+</div>
+<div class="kpis reveal">
+<div class="kpi"><small>Pass rate</small><strong>69%</strong><span>all checks pass on a question</span></div>
+<div class="kpi"><small>Right tools</small><strong>100%</strong><span>expected tools were called</span></div>
+<div class="kpi"><small>Right arguments</small><strong>85%</strong><span>filters match the question</span></div>
+<div class="kpi"><small>Grounded</small><strong>100%</strong><span>every number traced to data</span></div>
+</div>
+<p class="note reveal">The full 56-question suite runs nightly; its trend over time will be added once a few nights of runs exist.</p>
+<div class="findings reveal">
+<div class="finding"><span class="badge fixed">Fixed</span><div><h4>Silently ignored arguments</h4><p>The model passed <code>year=2020</code>, which isn't an argument. It was dropped without an error, so the model believed it had filtered by year. Tool inputs now reject unknown arguments, and a repository check keeps it that way.</p></div></div>
+<div class="finding"><span class="badge open">Open</span><div><h4>Invented filters</h4><p>For "automatic SUV, 2020 or newer, max 30k" the model adds a make and model the user never asked for.</p></div></div>
+<div class="finding"><span class="badge open">Open</span><div><h4>Dropped asking price</h4><p>"Seller wants 18,500 ... fair price?" gets an estimate but no verdict, because the asking price isn't passed on.</p></div></div>
+<div class="finding"><span class="badge learned">Learned</span><div><h4>Prompt rules are not free</h4><p>Rules that fixed the asking price made the model skip the price tool elsewhere; tool accuracy fell from 100% to 92%. Reverted. The next lever is a stronger model or a router, not rules tuned on 13 questions.</p></div></div>
+</div>
+<div class="chart-grid reveal" style="margin-top:40px">
+<article class="chart-card">
+<h4>Scorecard: current agent vs a prompt experiment</h4>
+<p>Extra prompt rules fixed one case and broke another. Tool and argument accuracy dropped, so the change was reverted.</p>
+<div aria-label="Grouped bar chart of pass rate, right tools, right arguments and grounded rate for two agent versions" class="chart" data-chart="scorecard" role="img"></div>
+<p class="source">Smoke set, 13 questions · <a href="https://github.com/yogesh660/car-agent-harness/actions/runs/40451093767">run 40451093767</a> vs <a href="https://github.com/yogesh660/car-agent-harness/actions/runs/40449444103">run 40449444103</a></p>
+</article>
+<article class="chart-card">
+<h4>Where it fails, by capability</h4>
+<p>Simple filters, comparisons and refusals pass. Multi-step questions and complex filters are the gap.</p>
+<div aria-label="Horizontal bar chart of pass rate per question category" class="chart" data-chart="categories" role="img"></div>
+<p class="source">Current agent, smoke set · passed / questions per category</p>
+</article>
+<article class="chart-card">
+<h4>What the eval set covers</h4>
+<p>56 ground-truth questions in nine categories. The smoke subset runs on every agent change; the full set runs nightly.</p>
+<div aria-label="Stacked bar chart of eval questions per category, smoke set and full set" class="chart" data-chart="composition" role="img"></div>
+<p class="source">Source: <a href="https://github.com/yogesh660/car-agent-harness/blob/main/evals/cases.jsonl">evals/cases.jsonl</a></p>
+</article>
+<article class="chart-card">
+<h4>The market the agent reasons over</h4>
+<p>Median price by vehicle age across 2,500 generated listings. This depreciation is the signal the price estimator recovers.</p>
+<div aria-label="Line chart of median listing price by vehicle age for each fuel type" class="chart" data-chart="market" role="img"></div>
+<p class="source">Synthetic, seeded data · <a href="https://github.com/yogesh660/car-agent-harness/blob/main/src/car_agent/data/seed.py">data/seed.py</a></p>
+</article>
+</div>
+</section>
+<section class="band" id="roadmap">
+<div class="section">
+<div class="head reveal">
+<div><span class="tag">07 / Roadmap</span><h2>Where it's going.</h2></div>
+<p>Every milestone ends with something you can open: numbers, a dashboard, a URL or a pull request.</p>
+</div>
+<div class="timeline">
+<article class="mile reveal"><div class="m">M0</div><span class="st done">Done</span><div><h3>Foundation</h3><p>Agent with three tools, synthetic data, CLAUDE.md, repository self-checks, CI.</p></div></article>
+<article class="mile reveal"><div class="m">M1</div><span class="st now">Finishing</span><div><h3>Measured agent</h3><p>56-question eval suite, number grounding, LLM judge, MLflow tracking, PR and nightly eval gate. Full-suite baseline pending.</p></div></article>
+<article class="mile reveal"><div class="m">M2</div><span class="st">Next</span><div><h3>Knowledge integration</h3><p>Postgres with pgvector for RAG over specs and reviews, a Neo4j knowledge graph, retrieval evals.</p><div class="chips"><span>pgvector</span><span>hybrid search</span><span>Neo4j</span></div></div></article>
+<article class="mile reveal"><div class="m">M3</div><span class="st">Planned</span><div><h3>Service</h3><p>FastAPI with streaming, a chat UI that shows every tool call, Docker images on GHCR.</p></div></article>
+<article class="mile reveal"><div class="m">M4</div><span class="st">Planned</span><div><h3>Kubernetes</h3><p>Helm chart, vLLM serving, autoscaling on queue length, Grafana dashboards for latency and cost per query.</p></div></article>
+<article class="mile reveal"><div class="m">M5</div><span class="st">Planned</span><div><h3>Own model</h3><p>LoRA fine-tune for query-to-filter extraction vs prompting, tracked in the MLflow registry with gated promotion.</p></div></article>
+<article class="mile reveal"><div class="m">M6</div><span class="st">Planned</span><div><h3>Production monitoring</h3><p>Tracing, online hallucination and drift checks, German-language queries.</p></div></article>
+<article class="mile reveal"><div class="m">M7</div><span class="st">Planned</span><div><h3>Agents on the repository</h3><p>Coding agents pick up scoped issues; merge rate and what CI caught are tracked and published.</p></div></article>
+</div>
+</div>
+</section>
+<section class="closing">
+<p class="tag reveal">Explore the build</p>
+<h2 class="reveal">Grounded answers.<br/><span>Measured changes.</span></h2>
+<div class="actions reveal">
+<a class="button light" href="https://github.com/yogesh660/car-agent-harness">Read the code
+        <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="16"><path d="M7 7h10v10"></path><path d="M7 17 17 7"></path></svg></a>
+<a class="button ghost" href="https://yogesh660.github.io/Yogesh_Awate/">Back to portfolio</a>
+</div>
+</section>
 </main>
-
 <footer><a class="mark" href="https://yogesh660.github.io/Yogesh_Awate/"><b>YA<span>.</span></b></a><p>Case study · car-agent-harness</p><span>© 2026 YOGESH AWATE</span></footer>
-
 <script>
   const nav = document.getElementById('nav');
   const links = document.getElementById('navlinks');

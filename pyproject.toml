@@ -42,7 +42,7 @@ packages = ["src/car_agent"]
 [tool.ruff]
 line-length = 100
 target-version = "py311"
-src = ["src", "tests", "evals"]
+src = ["src", "tests", "evals", "scripts"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
@@ -51,6 +51,7 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
 known-first-party = ["car_agent", "evals", "tests"]
 
 [tool.ruff.lint.per-file-ignores]
+"scripts/svgdiagram.py" = ["E501"]  # long SVG attribute strings read better unbroken
 "src/car_agent/data/seed.py" = ["E501"]  # catalog is laid out as a table on purpose
 
 [tool.pytest.ini_options]

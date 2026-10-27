@@ -24,6 +24,7 @@ Always use the make targets, they are exactly what CI runs. Dependencies are man
 - `make eval-baseline` - re-record `evals/baseline.json` (only when a drop is understood and accepted)
 - `make tools` - prints every tool and its input schema, handy before editing one
 - `make mlflow` - MLflow UI for eval runs logged with `EVAL_ARGS=--mlflow`
+- `make site` - regenerate the case-study page's architecture images and chart data
 
 ## Layout
 
@@ -48,7 +49,8 @@ tests/agent/        graph and eval-runner tests with a scripted fake model (no n
 tests/agent/scripted.py  the fake model; use it for anything that needs a model
 tests/test_harness.py  checks on the repo itself (docs, tests, schemas, eval set)
 docs/adr/           why things are the way they are
-site/               public case-study page, deployed by .github/workflows/pages.yml
+site/               public case-study page (Plotly charts, SVG diagrams), deployed by pages.yml
+scripts/            site_assets.py builds site/img and site/data.js from the repo and recorded eval runs
 ```
 
 ## Adding or changing a tool
