@@ -4,13 +4,17 @@ from __future__ import annotations
 
 import sqlite3
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from car_agent.schemas import MARKET_YEAR, Listing
 from car_agent.tools.pricing import EstimatePriceInput, PriceEstimate, estimate_price
 
 
 class CompareListingsInput(BaseModel):
+    # unknown args must fail loudly; silently ignoring e.g. 'year' made the model think
+    # it had filtered by year when it hadn't
+    model_config = ConfigDict(extra="forbid")
+
     listing_ids: list[int] = Field(
         min_length=2, max_length=4, description="IDs of 2 to 4 listings to compare."
     )

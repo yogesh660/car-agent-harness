@@ -5,7 +5,7 @@ from __future__ import annotations
 import sqlite3
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from car_agent.schemas import Body, Fuel, Listing, Transmission, normalize_city, normalize_make
 
@@ -21,6 +21,10 @@ _ORDER_BY: dict[SortBy, str] = {
 
 
 class SearchListingsInput(BaseModel):
+    # unknown args must fail loudly; silently ignoring e.g. 'year' made the model think
+    # it had filtered by year when it hadn't
+    model_config = ConfigDict(extra="forbid")
+
     make: str | None = Field(
         default=None, description="Manufacturer, e.g. 'BMW'. Case-insensitive."
     )

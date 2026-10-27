@@ -15,6 +15,11 @@ def test_bad_args_become_error_message(conn: sqlite3.Connection):
     assert "fuel" in out["error"]
 
 
+def test_unknown_arg_is_rejected_with_its_name(conn: sqlite3.Connection):
+    out = run_tool("search_listings", conn, {"year": 2020, "body": "suv"})
+    assert "year" in out["error"]
+
+
 def test_not_found_becomes_error_message(conn: sqlite3.Connection):
     out = run_tool("estimate_price", conn, {"listing_id": 999_999})
     assert "not found" in out["error"]

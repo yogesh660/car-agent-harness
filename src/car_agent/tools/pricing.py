@@ -6,7 +6,7 @@ import sqlite3
 import statistics
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from car_agent.schemas import Listing, normalize_make
 
@@ -24,6 +24,10 @@ _MATCH_LEVELS: tuple[tuple[MatchLevel, int, int | None], ...] = (
 
 
 class EstimatePriceInput(BaseModel):
+    # unknown args must fail loudly; silently ignoring e.g. 'year' made the model think
+    # it had filtered by year when it hadn't
+    model_config = ConfigDict(extra="forbid")
+
     listing_id: int | None = Field(
         default=None,
         description="Value an existing listing. If set, the car fields below are ignored.",

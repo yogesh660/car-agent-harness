@@ -47,6 +47,12 @@ def test_every_tool_argument_is_described(spec):
 
 
 @pytest.mark.parametrize("spec", TOOLS, ids=lambda s: s.name)
+def test_tool_inputs_reject_unknown_args(spec):
+    # found by evals: the model passed "year" to search_listings, it was silently dropped
+    assert spec.input_model.model_config.get("extra") == "forbid"
+
+
+@pytest.mark.parametrize("spec", TOOLS, ids=lambda s: s.name)
 def test_tool_names_and_descriptions(spec):
     assert re.fullmatch(r"[a-z][a-z_]+", spec.name)
     assert len(spec.description) >= 40
