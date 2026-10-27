@@ -42,7 +42,7 @@ Few tools, each doing one job. Adding a tool needs an ADR.
 | Packaging | **uv** + `uv.lock` | reproducible installs, 5-10x faster CI than pip |
 | Agent | **LangGraph** | explicit graph, checkpointing, human-in-the-loop later (ADR 0001) |
 | Listings + vectors | **Postgres + pgvector** | one database for structured filters and embeddings; no separate vector DB to run |
-| Knowledge graph | **Neo4j** (Community) | makes/models/engines/known issues; Cypher is easy to show in interviews |
+| Knowledge graph | **Neo4j** (Community) | makes/models/engines/known issues map naturally to a graph; Cypher queries are easy to read |
 | Model serving | **vLLM** | OpenAI-compatible API, so the agent code does not change; serves multiple LoRA adapters |
 | Tracking | **MLflow** | one tool for fine-tuning runs, model registry, prompt versions, eval results and agent traces |
 | Infra metrics | **Prometheus + Grafana** | standard on Kubernetes; vLLM exports metrics natively |
@@ -71,15 +71,11 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
 - [x] Smoke baseline recorded from CI (qwen2.5:7b on CPU: pass 69%, grounded 100%), results and findings in README
 - [ ] Full-set baseline from the first nightly run
 
-**Shows:** evaluation strategy, ground-truth datasets, regression gates
-
 ### M2 - Knowledge integration (week 4-5)
 - Move listings to Postgres; SQLite stays for tests
 - RAG over car specs and owner reviews (pgvector, hybrid BM25 + vector search, reranker)
 - Knowledge graph: make -> model -> generation -> engine -> known issues; `kg_lookup` tool
 - Retrieval evals: recall@k and citation accuracy, tracked in MLflow
-
-**Shows:** RAG, vector search, graph-based retrieval (listed as a plus in the AutoScout24 role)
 
 ### M3 - Service and containers (week 6-7)
 - FastAPI: `/ask` (streaming), `/health`, `/metrics`
@@ -87,15 +83,11 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
 - Multi-stage Dockerfiles (slim runtime image, non-root user), `docker compose up` for everything
 - CI builds images on every PR, scans them with Trivy, pushes to GHCR on main
 
-**Shows:** clean APIs, production packaging
-
 ### M4 - Kubernetes (week 8-9)
 - Helm chart: API, Postgres, Neo4j, vLLM (GPU optional, CPU small-model profile for demos)
 - HPA on the API; vLLM scaled on queue length
 - CI spins up kind, installs the chart, runs smoke tests against it
 - Prometheus + Grafana dashboards: latency p50/p95, tokens/s, tool error rate, cost per query
-
-**Shows:** deployment and scaling patterns
 
 ### M5 - Own model (week 10-11)
 - Fine-tune a small open model (LoRA) for query -> search filters, on synthetic + hand-labelled
@@ -104,8 +96,6 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
 - Register the adapter in the MLflow model registry; vLLM loads it by registry alias
 - Promotion rule: new adapter goes live only if eval pass rate >= current
 
-**Shows:** fine-tuning, model tracking, model promotion
-
 ### M6 - Monitoring in production (week 12)
 - Every request traced to MLflow (OpenTelemetry)
 - Online checks on sampled traffic: hallucinated numbers, unsupported claims, tool failures
@@ -113,15 +103,11 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
   longer looks like real traffic
 - German-language queries supported and evaluated
 
-**Shows:** drift and hallucination detection, long-term model performance
-
 ### M7 - Agents working on the repo (ongoing, from M1)
 - Claude Code GitHub Action picks up issues labelled `agent-task`
 - `.claude/` with project commands and hooks (run `make check` before finishing)
 - Track per agent PR: merged or not, review rounds, what CI caught. Summary table in README
 - Write-up: what had to be added to the harness so agents stopped making each mistake
-
-**Shows:** harness engineering with evidence, the core of the role
 
 ## CI/CD pipeline (end state)
 
