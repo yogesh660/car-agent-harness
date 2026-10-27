@@ -80,9 +80,28 @@ site/               public case-study page, deployed by .github/workflows/pages.
 - New dependency? Add it to `pyproject.toml`, run `make lock`, commit `uv.lock`, and explain
   why in the PR.
 
+## Branches, merges and releases
+
+Nothing is committed to `main` directly. Every change goes through a short-lived branch and
+lands only when its checks are green.
+
+1. Branch from an up-to-date `main`: `feature/<topic>` for new work (one milestone or part
+   of one), `fix/<topic>` for bugs. Keep it small enough to review in one sitting.
+2. Commit in small logical steps; `make check` passes before every commit.
+3. Push the branch. CI runs on it (plus any eval workflow the change triggers). Fix until
+   every required workflow is green on the branch head.
+4. Merge with a merge commit so the branch stays visible in history:
+   `git checkout main && git pull && git merge --no-ff <branch> -m "Merge <branch>: <one-line summary>"`,
+   then push `main` and delete the branch (`git push origin --delete <branch>`).
+5. CI runs again on `main`. If it fails, fix it on a `fix/` branch straight away.
+6. When a roadmap milestone is complete (its heading gets "(done)"), tag the merge commit:
+   `git tag -a v0.<n+1>.0 -m "M<n>: <milestone name>"` (M0 -> v0.1.0, M1 -> v0.2.0, ...) and
+   push the tag. Bug fixes after that bump the patch number (v0.2.1).
+
 ## Done means
 
-- `make check` passes locally
+- `make check` passes locally and CI is green on the branch
+- merged into `main` through the flow above, never pushed to it directly
 - new behaviour has a test, new tool has an eval case
 - if you changed how to work in this repo, this file is updated too
 - PR description filled in using `.github/pull_request_template.md`
