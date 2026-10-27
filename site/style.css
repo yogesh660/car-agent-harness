@@ -267,6 +267,7 @@ code { font-family: var(--mono); font-size: .88em; color: var(--soft); backgroun
 .figure { margin: 0; }
 .figure img { width: 100%; height: auto; display: block; border-radius: 22px; border: 1px solid var(--line); background: #0b0c12; }
 .figure figcaption { margin-top: 14px; font: 400 12px var(--mono); color: var(--dim); letter-spacing: .04em; line-height: 1.6; }
+.figure.narrow { max-width: 760px; margin: 0 auto; }
 .figure-pair { display: grid; grid-template-columns: 1.1fr 1fr; gap: 18px; align-items: start; }
 
 /* ---------- charts ---------- */
