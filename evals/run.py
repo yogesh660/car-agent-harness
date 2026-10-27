@@ -139,8 +139,24 @@ def write_baseline(suite: str, metrics: dict[str, float], params: dict[str, Any]
     print(f"baseline for '{suite}' written to {BASELINE}")
 
 
-def report_to_github(suite: str, metrics: dict[str, float], problems: list[str]) -> None:
-    """Job summary table + a notice annotation (annotations are readable via the public API)."""
+def failure_reason(row: dict[str, Any]) -> str:
+    if "error" in row:
+        return str(row["error"])
+    parts = []
+    if row["missing_tools"]:
+        parts.append(f"missing {', '.join(row['missing_tools'])}")
+    if row["unexpected_tool_use"]:
+        parts.append("called tools when none were needed")
+    parts += row["arg_mismatches"]
+    if row["missing_mentions"]:
+        parts.append(f"answer does not mention {row['missing_mentions']}")
+    return "; ".join(parts)
+
+
+def report_to_github(
+    suite: str, metrics: dict[str, float], problems: list[str], rows: list[dict[str, Any]]
+) -> None:
+    """Job summary + annotations (annotations are readable through the public API)."""
     headline = (
         f"{suite}: pass {metrics['pass_rate']:.0%}, tools {metrics['tool_accuracy']:.0%}, "
         f"args {metrics['arg_accuracy']:.0%}, grounded {metrics['grounded_rate']:.0%}"
@@ -149,6 +165,10 @@ def report_to_github(suite: str, metrics: dict[str, float], problems: list[str])
         headline += f", judge {metrics['judge_supported_rate']:.0%}"
     level = "error" if problems else "notice"
     print(f"::{level} title=car-agent eval::{headline}")
+    # GitHub shows up to 10 warnings per step; enough to see what broke
+    for row in [r for r in rows if not r["passed"]][:10]:
+        reason = failure_reason(row).replace("\n", " ")[:400]
+        print(f"::warning title=eval failed: {row['case_id']}::{reason}")
 
     summary = os.environ.get("GITHUB_STEP_SUMMARY")
     if not summary:
@@ -251,7 +271,7 @@ def main() -> int:
 
     problems = [] if suite == "custom" else check_gate(metrics, suite, args.min_pass, args.max_drop)
     if os.environ.get("GITHUB_ACTIONS"):
-        report_to_github(suite, metrics, problems)
+        report_to_github(suite, metrics, problems, rows)
     for problem in problems:
         print(f"GATE: {problem}")
     return 1 if problems else 0
