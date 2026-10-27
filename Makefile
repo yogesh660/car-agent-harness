@@ -6,7 +6,7 @@ Q ?= Find me a diesel estate under 15000 euros with low mileage
 EVAL_ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help setup lock seed lint format typecheck test check eval eval-smoke eval-baseline ask tools mlflow clean
+.PHONY: help setup lock seed lint format typecheck test check eval eval-smoke eval-baseline ask tools mlflow site clean
 
 help: ## List available targets
 	@grep -E '^[a-z-]+:.*## ' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*## "}; {printf "  %-14s %s\n", $$1, $$2}'
@@ -22,12 +22,12 @@ seed: ## Build data/listings.db from the deterministic generator
 	$(RUN) car-agent seed
 
 lint: ## Ruff lint and format check (no changes)
-	$(RUN) ruff check src tests evals
-	$(RUN) ruff format --check src tests evals
+	$(RUN) ruff check src tests evals scripts
+	$(RUN) ruff format --check src tests evals scripts
 
 format: ## Auto-fix lint issues and format code
-	$(RUN) ruff check --fix src tests evals
-	$(RUN) ruff format src tests evals
+	$(RUN) ruff check --fix src tests evals scripts
+	$(RUN) ruff format src tests evals scripts
 
 typecheck: ## Mypy (strict) on src/
 	$(RUN) mypy
@@ -55,6 +55,9 @@ tools: ## Print every agent tool with its input schema
 
 mlflow: ## MLflow UI on http://localhost:5000 for runs logged with --mlflow
 	$(RUN) mlflow ui --backend-store-uri sqlite:///mlflow.db
+
+site: ## Regenerate the case-study page's diagrams and chart data (site/img, site/data.js)
+	$(RUN) python scripts/site_assets.py
 
 clean: ## Remove generated data and caches
 	rm -rf data/*.db evals/results .pytest_cache .mypy_cache .ruff_cache
