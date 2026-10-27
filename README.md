@@ -92,7 +92,32 @@ In CI, [`eval.yml`](.github/workflows/eval.yml) runs the smoke set on PRs that c
 and the full set nightly. It uses a hosted model when the `EVAL_API_KEY` secret is set, and
 otherwise Ollama on the runner's CPU, so it works without any paid key. A run fails when the
 pass rate or grounded rate drops more than 5 points below the accepted scores in
-`evals/baseline.json`; a failed nightly run opens an issue.
+[`evals/baseline.json`](evals/baseline.json); a failed nightly run opens an issue.
+
+### Current results
+
+Qwen 2.5 7B via Ollama on a GitHub Actions CPU runner, temperature 0 (results were identical
+across three runs).
+
+| Suite | Pass | Right tools | Right args | Grounded |
+|---|---|---|---|---|
+| smoke (13 cases) | 69% | 100% | 85% | 100% |
+| full (56 cases) | first nightly run pending | | | |
+
+### What the evals found so far
+
+- **Silently ignored arguments.** The model called `search_listings` with `year=2020`, which
+  isn't an argument. Pydantic dropped it without an error, so the model believed it had
+  filtered by year. Tool inputs now reject unknown arguments, and the model retries with
+  `min_year`. A repo self-check keeps it that way.
+- **Invented filters.** For "automatic SUV, 2020 or newer, max 30k" the model adds
+  `make=Volkswagen, model=Tiguan`, which the user never asked for. Still failing.
+- **Dropped asking price.** "Seller wants 18,500 ... fair price?" gets an estimate but no
+  verdict, because the asking price isn't passed on. Still failing.
+- **Prompt rules are not free.** Adding rules for the two issues above fixed the asking price
+  but made the model skip the price tool on another case, so tool accuracy fell from 100% to
+  92%. The change was reverted. Next step is a better model or a router, not more rules
+  tuned on 13 cases.
 
 ## The harness
 
@@ -112,7 +137,7 @@ pass rate or grounded rate drops more than 5 points below the accepted scores in
 Full plan with stack choices and CI/CD design: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 - [x] **M0** Agent with 3 tools, tests, CI, CLAUDE.md, eval set
-- [x] **M1** Measured agent: 56 eval cases, grounding check, LLM-as-judge, MLflow tracking, nightly eval gate (baselines pending)
+- [x] **M1** Measured agent: 56 eval cases, grounding check, LLM-as-judge, MLflow tracking, nightly eval gate (full-set baseline pending)
 - [ ] **M2** Knowledge: Postgres + pgvector RAG, Neo4j knowledge graph, retrieval evals
 - [ ] **M3** Service: FastAPI, Streamlit trace UI, Docker images on GHCR
 - [ ] **M4** Kubernetes: Helm chart, vLLM, autoscaling, Grafana dashboards
