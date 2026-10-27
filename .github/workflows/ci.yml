@@ -29,6 +29,17 @@ jobs:
       - name: lint
         run: make lint
       - name: typecheck
-        run: make typecheck
+        # mypy and pytest have no GitHub output format; their failures become annotations
+        run: |
+          set -o pipefail
+          status=0
+          make typecheck 2>&1 | tee mypy.log || status=$?
+          sed -nE 's/^([^:]+):([0-9]+): error: (.*)$/::error file=\1,line=\2,title=mypy::\3/p' mypy.log
+          exit $status
       - name: test
-        run: uv run pytest --cov=car_agent --cov=evals --cov-report=term-missing
+        run: |
+          set -o pipefail
+          status=0
+          uv run pytest -rf --cov=car_agent --cov=evals --cov-report=term-missing 2>&1 | tee pytest.log || status=$?
+          sed -nE 's/^FAILED ([^:]+)::([^ ]+)( - (.*))?$/::error file=\1,title=\2::\4/p' pytest.log
+          exit $status

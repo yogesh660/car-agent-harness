@@ -98,8 +98,8 @@ def run_agent(graph: Any, question: str, max_steps: int = 8) -> AgentResult:
     ]
     ai = [m for m in messages if isinstance(m, AIMessage)]
     # usage_metadata is None for providers/fakes that don't report it
-    tokens_in = sum((m.usage_metadata or {}).get("input_tokens", 0) for m in ai)
-    tokens_out = sum((m.usage_metadata or {}).get("output_tokens", 0) for m in ai)
+    tokens_in = sum(m.usage_metadata["input_tokens"] for m in ai if m.usage_metadata)
+    tokens_out = sum(m.usage_metadata["output_tokens"] for m in ai if m.usage_metadata)
     return AgentResult(
         answer=_text(messages[-1]),
         tool_calls=calls,
