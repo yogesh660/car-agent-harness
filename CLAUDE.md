@@ -48,6 +48,7 @@ tests/agent/        graph and eval-runner tests with a scripted fake model (no n
 tests/agent/scripted.py  the fake model; use it for anything that needs a model
 tests/test_harness.py  checks on the repo itself (docs, tests, schemas, eval set)
 docs/adr/           why things are the way they are
+site/               public case-study page, deployed by .github/workflows/pages.yml
 ```
 
 ## Adding or changing a tool

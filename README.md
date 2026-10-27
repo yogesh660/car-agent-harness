@@ -3,6 +3,8 @@
 [![ci](https://github.com/yogesh660/car-agent-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/yogesh660/car-agent-harness/actions/workflows/ci.yml)
 [![eval](https://github.com/yogesh660/car-agent-harness/actions/workflows/eval.yml/badge.svg)](https://github.com/yogesh660/car-agent-harness/actions/workflows/eval.yml)
 
+**Case study page:** [yogesh660.github.io/car-agent-harness](https://yogesh660.github.io/car-agent-harness/)
+
 A LangGraph agent for a used-car marketplace, built in a repo that is set up for coding agents
 to work in safely.
 
