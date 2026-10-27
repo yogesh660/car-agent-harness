@@ -92,11 +92,11 @@ lands only when its checks are green.
    every required workflow is green on the branch head.
 4. Merge with a merge commit so the branch stays visible in history:
    `git checkout main && git pull && git merge --no-ff <branch> -m "Merge <branch>: <one-line summary>"`,
-   then push `main` and delete the branch (`git push origin --delete <branch>`).
+   then push `main`. The housekeeping workflow deletes merged `feature/` and `fix/` branches.
 5. CI runs again on `main`. If it fails, fix it on a `fix/` branch straight away.
-6. When a roadmap milestone is complete (its heading gets "(done)"), tag the merge commit:
-   `git tag -a v0.<n+1>.0 -m "M<n>: <milestone name>"` (M0 -> v0.1.0, M1 -> v0.2.0, ...) and
-   push the tag. Bug fixes after that bump the patch number (v0.2.1).
+6. When a roadmap milestone is complete, end its heading in `docs/ROADMAP.md` with "(done)".
+   After the merge, the housekeeping workflow tags `main` as `v0.<n+1>.0` (M0 -> v0.1.0,
+   M1 -> v0.2.0, ...). Don't create or push tags by hand.
 
 ## Done means
 

@@ -1,0 +1,44 @@
+# After every merge to main: delete merged feature/fix branches and tag finished milestones.
+# A milestone is finished when its heading in docs/ROADMAP.md ends in "(done)";
+# M0 -> v0.1.0, M1 -> v0.2.0, ... Existing tags are left alone.
+name: housekeeping
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: housekeeping
+  cancel-in-progress: false
+
+jobs:
+  tidy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: delete merged branches
+        run: |
+          for b in $(git branch -r --merged origin/main | sed 's#^ *origin/##' | grep -E '^(feature|fix)/' || true); do
+            echo "deleting $b"
+            git push origin --delete "$b"
+          done
+
+      - name: tag finished milestones
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898099+github-actions[bot]@users.noreply.github.com"
+          grep -E '^### M[0-9]+ .*\(done\)$' docs/ROADMAP.md | while read -r line; do
+            n=$(sed -E 's/^### M([0-9]+).*/\1/' <<< "$line")
+            name=$(sed -E 's/^### M[0-9]+ - (.*) \(done\)$/\1/' <<< "$line")
+            tag="v0.$((n + 1)).0"
+            if git rev-parse -q --verify "refs/tags/$tag" > /dev/null; then continue; fi
+            echo "tagging $tag: M$n $name"
+            git tag -a "$tag" -m "M$n: $name"
+            git push origin "$tag"
+          done
