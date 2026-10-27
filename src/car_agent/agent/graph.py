@@ -12,7 +12,13 @@ from dataclasses import dataclass, field
 from typing import Annotated, Any, TypedDict
 
 from langchain_core.language_models import BaseChatModel
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
+from langchain_core.messages import (
+    AIMessage,
+    AnyMessage,
+    HumanMessage,
+    SystemMessage,
+    ToolMessage,
+)
 from langchain_core.tools import BaseTool
 from langgraph.errors import GraphRecursionError
 from langgraph.graph import END, START, StateGraph
@@ -40,6 +46,13 @@ class AgentResult:
     tool_calls: list[ToolCall] = field(default_factory=list)
     messages: list[AnyMessage] = field(default_factory=list)
     stopped_early: bool = False
+    input_tokens: int = 0
+    output_tokens: int = 0
+
+    @property
+    def tool_outputs(self) -> list[str]:
+        """Raw text of every tool result, in order. Used to check answers against."""
+        return [_text(m) for m in self.messages if isinstance(m, ToolMessage)]
 
 
 def build_graph(llm: BaseChatModel, tools: Sequence[BaseTool]) -> Any:
@@ -83,4 +96,14 @@ def run_agent(graph: Any, question: str, max_steps: int = 8) -> AgentResult:
         if isinstance(m, AIMessage)
         for tc in m.tool_calls
     ]
-    return AgentResult(answer=_text(messages[-1]), tool_calls=calls, messages=messages)
+    ai = [m for m in messages if isinstance(m, AIMessage)]
+    # usage_metadata is None for providers/fakes that don't report it
+    tokens_in = sum((m.usage_metadata or {}).get("input_tokens", 0) for m in ai)
+    tokens_out = sum((m.usage_metadata or {}).get("output_tokens", 0) for m in ai)
+    return AgentResult(
+        answer=_text(messages[-1]),
+        tool_calls=calls,
+        messages=messages,
+        input_tokens=tokens_in,
+        output_tokens=tokens_out,
+    )

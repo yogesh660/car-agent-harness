@@ -11,22 +11,11 @@ import pytest
 
 pytest.importorskip("langgraph")
 
-from langchain_core.language_models.fake_chat_models import GenericFakeChatModel
 from langchain_core.messages import AIMessage, ToolMessage
 
 from car_agent.agent.graph import OUT_OF_STEPS, build_graph, run_agent
 from car_agent.agent.tools import build_tools
-
-
-class ScriptedModel(GenericFakeChatModel):
-    """Plays back AIMessages in order. bind_tools is a no-op."""
-
-    def bind_tools(self, tools, **kwargs):
-        return self
-
-
-def call(name, args, call_id="call_1"):
-    return AIMessage(content="", tool_calls=[{"name": name, "args": args, "id": call_id}])
+from tests.agent.scripted import ScriptedModel, call
 
 
 def test_search_then_answer(db_path):
@@ -94,3 +83,21 @@ def test_step_budget_stops_a_looping_model(db_path):
 
     assert result.stopped_early
     assert result.answer == OUT_OF_STEPS
+
+
+def test_tokens_and_tool_outputs_are_collected(db_path):
+    usage = {"input_tokens": 100, "output_tokens": 20, "total_tokens": 120}
+    model = ScriptedModel(
+        messages=iter(
+            [
+                call("estimate_price", {"listing_id": 42}, usage=usage),
+                AIMessage(content="Fair price.", usage_metadata=usage),
+            ]
+        )
+    )
+    result = run_agent(build_graph(model, build_tools(db_path)), "is #42 a good deal?")
+
+    assert result.input_tokens == 200
+    assert result.output_tokens == 40
+    assert len(result.tool_outputs) == 1
+    assert json.loads(result.tool_outputs[0])["verdict"] in ("below_market", "fair", "above_market")
