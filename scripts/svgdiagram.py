@@ -134,6 +134,26 @@ class Diagram:
                 f'font-size="11" fill="#b9b9c4">{escape(label)}</text>'
             )
 
+    def path(
+        self, points: list[tuple[float, float]], label: str = "", dashed: bool = False
+    ) -> None:
+        d = "M" + " L".join(f"{x},{y}" for x, y in points)
+        dash = ' stroke-dasharray="5 5"' if dashed else ""
+        self.parts.append(
+            f'<path d="{d}" fill="none" stroke="#7a7a88" stroke-width="1.6"{dash} marker-end="url(#arrow)"/>'
+        )
+        if label:
+            (x1, y1), (x2, y2) = points[len(points) // 2 - 1], points[len(points) // 2]
+            self.label((x1 + x2) / 2, (y1 + y2) / 2, label)
+
+    def label(self, lx: float, ly: float, text: str) -> None:
+        self.parts.append(
+            f'<rect x="{lx - len(text) * 3.6 - 8}" y="{ly - 11}" width="{len(text) * 7.2 + 16}" '
+            f'height="20" rx="10" fill="#0c0e16" stroke="#ffffff1a"/>'
+            f'<text x="{lx}" y="{ly + 4}" text-anchor="middle" font-family="{MONO}" '
+            f'font-size="11" fill="#b9b9c4">{escape(text)}</text>'
+        )
+
     def legend(self, x: float, y: float) -> None:
         items = [
             ("model", "Model"),
