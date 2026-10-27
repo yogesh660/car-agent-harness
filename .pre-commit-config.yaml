@@ -1,20 +1,20 @@
-# Local hooks reuse the tools installed by `make setup`, so versions match CI exactly.
+# Local hooks run the project's own tool versions through uv, so they match CI exactly.
 repos:
   - repo: local
     hooks:
       - id: ruff-check
         name: ruff check
-        entry: ruff check --fix
+        entry: uv run ruff check --fix
         language: system
         types: [python]
       - id: ruff-format
         name: ruff format
-        entry: ruff format
+        entry: uv run ruff format
         language: system
         types: [python]
       - id: mypy
         name: mypy
-        entry: mypy
+        entry: uv run mypy
         language: system
         types: [python]
         pass_filenames: false

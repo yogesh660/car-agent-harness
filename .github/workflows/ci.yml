@@ -18,15 +18,17 @@ jobs:
         python: ["3.11", "3.12"]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: astral-sh/setup-uv@v6
         with:
           python-version: ${{ matrix.python }}
-          cache: pip
+          enable-cache: true
       - name: install
-        run: python -m pip install -e ".[dev]"
+        # --locked fails if uv.lock is out of date with pyproject.toml
+        run: |
+          if [ -f uv.lock ]; then uv sync --all-extras --locked; else uv sync --all-extras; fi
       - name: lint
         run: make lint
       - name: typecheck
         run: make typecheck
       - name: test
-        run: python -m pytest --cov=car_agent --cov-report=term-missing
+        run: uv run pytest --cov=car_agent --cov=evals --cov-report=term-missing
