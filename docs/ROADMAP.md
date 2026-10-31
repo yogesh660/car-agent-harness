@@ -3,7 +3,7 @@
 Where this is going and in what order. Each milestone ends with something a person can open
 and look at (a dashboard, a URL, a PR), not just "code exists". Updated as milestones land.
 
-Status: **M0 done** (2026-10-22) · **M1 nearly done** (2026-11-01): full-set baseline pending
+Status: **M0 done** (2026-10-22) · **M1 done** (2026-11-01)
 
 ## Target architecture
 
@@ -57,7 +57,7 @@ Few tools, each doing one job. Adding a tool needs an ADR.
 ### M0 - Foundation (done)
 Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, CI.
 
-### M1 - Measured agent (week 2-3)
+### M1 - Measured agent (done)
 - [x] Switch to `uv` (dependency groups, `make setup` / `make lock`, uv in CI)
 - [x] Commit `uv.lock` so CI installs with `--locked`
 - [x] Eval set grown to 56 cases in 9 categories, including multi-step, not-found, vague and
@@ -69,7 +69,7 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
   drop of more than 5 points against `evals/baseline.json`, issue opened on nightly regression;
   hosted model if `EVAL_API_KEY` is set, otherwise Ollama on the runner's CPU
 - [x] Smoke baseline recorded from CI (qwen2.5:7b on CPU: pass 69%, grounded 100%), results and findings in README
-- [ ] Full-set baseline from the first nightly run
+- [x] Full-set baseline recorded from CI (qwen2.5:7b on CPU: pass 75%, grounded 98%)
 
 ### M2 - Knowledge integration (week 4-5)
 - Move listings to Postgres; SQLite stays for tests

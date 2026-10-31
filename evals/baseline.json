@@ -8,5 +8,15 @@
     "prompt_sha": "d4d7e05812f6",
     "tools_sha": "c41eee0185df",
     "date": "2026-10-27"
+  },
+  "full": {
+    "metrics": {
+      "pass_rate": 0.75,
+      "grounded_rate": 0.9821
+    },
+    "model": "ollama:qwen2.5:7b",
+    "prompt_sha": "d4d7e05812f6",
+    "tools_sha": "c41eee0185df",
+    "date": "2026-10-31"
   }
 }
