@@ -237,7 +237,7 @@ across three runs).
 | Suite | Pass | Right tools | Right args | Grounded |
 |---|---|---|---|---|
 | smoke (13 cases) | 69% | 100% | 85% | 100% |
-| full (56 cases) | first nightly run pending | | | |
+| full (56 cases) | 75% | 89% | 82% | 98% |
 
 ### What the evals found so far
 
@@ -272,7 +272,7 @@ across three runs).
 Full plan with stack choices and CI/CD design: [docs/ROADMAP.md](docs/ROADMAP.md).
 
 - [x] **M0** Agent with 3 tools, tests, CI, CLAUDE.md, eval set
-- [x] **M1** Measured agent: 56 eval cases, grounding check, LLM-as-judge, MLflow tracking, nightly eval gate (full-set baseline pending)
+- [x] **M1** Measured agent: 56 eval cases, grounding check, LLM-as-judge, MLflow tracking, nightly eval gate
 - [ ] **M2** Knowledge: Postgres + pgvector RAG, Neo4j knowledge graph, retrieval evals
 - [ ] **M3** Service: FastAPI, Streamlit trace UI, Docker images on GHCR
 - [ ] **M4** Kubernetes: Helm chart, vLLM, autoscaling, Grafana dashboards
