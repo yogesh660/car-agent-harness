@@ -3,7 +3,7 @@
 Where this is going and in what order. Each milestone ends with something a person can open
 and look at (a dashboard, a URL, a PR), not just "code exists". Updated as milestones land.
 
-Status: **M0 done** (2026-10-22) · **M1 nearly done** (2026-10-27): full-set baseline and `uv.lock` pending
+Status: **M0 done** (2026-10-22) · **M1 nearly done** (2026-11-01): full-set baseline pending
 
 ## Target architecture
 
@@ -59,7 +59,7 @@ Agent with 3 tools, synthetic data, CLAUDE.md, repo self-checks, 13 eval cases, 
 
 ### M1 - Measured agent (week 2-3)
 - [x] Switch to `uv` (dependency groups, `make setup` / `make lock`, uv in CI)
-- [ ] Commit `uv.lock` so CI installs with `--locked`
+- [x] Commit `uv.lock` so CI installs with `--locked`
 - [x] Eval set grown to 56 cases in 9 categories, including multi-step, not-found, vague and
   out-of-scope cases; 13 marked as the smoke set
 - [x] Number grounding check on every case: every number in the answer must come from a tool result
