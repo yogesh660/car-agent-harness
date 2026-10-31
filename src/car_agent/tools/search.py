@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-import sqlite3
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from car_agent.db import ReadConnection
 from car_agent.schemas import Body, Fuel, Listing, Transmission, normalize_city, normalize_make
 
 SortBy = Literal["price_asc", "price_desc", "mileage_asc", "year_desc"]
@@ -71,7 +71,7 @@ def _escape_like(value: str) -> str:
     return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
 
 
-def search_listings(conn: sqlite3.Connection, params: SearchListingsInput) -> SearchListingsOutput:
+def search_listings(conn: ReadConnection, params: SearchListingsInput) -> SearchListingsOutput:
     clauses: list[str] = []
     args: list[object] = []
 
@@ -103,7 +103,10 @@ def search_listings(conn: sqlite3.Connection, params: SearchListingsInput) -> Se
             args.append(num)
 
     where = " AND ".join(clauses) or "1 = 1"
-    total = conn.execute(f"SELECT COUNT(*) FROM listings WHERE {where}", args).fetchone()[0]
+    total_row = conn.execute(f"SELECT COUNT(*) FROM listings WHERE {where}", args).fetchone()
+    if total_row is None:
+        raise RuntimeError("Count query returned no row")
+    total = total_row[0]
     rows = conn.execute(
         f"SELECT * FROM listings WHERE {where} ORDER BY {_ORDER_BY[params.sort_by]}, id LIMIT ?",
         [*args, params.limit],

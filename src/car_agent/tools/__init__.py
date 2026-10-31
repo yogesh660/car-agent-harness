@@ -6,13 +6,13 @@ here on purpose, see ADR 0002. agent/tools.py wraps them for the graph.
 
 from __future__ import annotations
 
-import sqlite3
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
 
+from car_agent.db import ReadConnection
 from car_agent.tools.compare import CompareListingsInput, compare_listings
 from car_agent.tools.pricing import EstimatePriceInput, estimate_price
 from car_agent.tools.search import SearchListingsInput, search_listings
@@ -23,7 +23,7 @@ class ToolSpec:
     name: str
     description: str  # the model reads this, write it for the model
     input_model: type[BaseModel]
-    fn: Callable[[sqlite3.Connection, Any], BaseModel]
+    fn: Callable[[ReadConnection, Any], BaseModel]
 
 
 TOOLS: tuple[ToolSpec, ...] = (
@@ -60,7 +60,7 @@ TOOLS: tuple[ToolSpec, ...] = (
 TOOLS_BY_NAME = {spec.name: spec for spec in TOOLS}
 
 
-def run_tool(name: str, conn: sqlite3.Connection, args: dict[str, Any]) -> dict[str, Any]:
+def run_tool(name: str, conn: ReadConnection, args: dict[str, Any]) -> dict[str, Any]:
     """Validate args, run the tool, return JSON-able data.
 
     Bad input or "not found" comes back as {"error": ...} instead of raising, so the

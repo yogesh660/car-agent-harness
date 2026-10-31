@@ -9,7 +9,7 @@ upgrade risks the business logic, and testing a tool needs the whole framework.
 
 ## Decision
 
-Each tool in `src/car_agent/tools/` is a function `(sqlite3.Connection, InputModel) -> OutputModel`
+Each tool in `src/car_agent/tools/` is a function `(ReadConnection, InputModel) -> OutputModel`
 with pydantic models for input and output. No langchain or langgraph imports there. The registry
 (`TOOLS`) holds name, description and input model. `agent/tools.py` wraps them as LangChain
 `StructuredTool`s.
