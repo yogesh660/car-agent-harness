@@ -5,6 +5,7 @@ every tool tested, every tool described well enough for a model to use it.
 If one of these fails, the fix is usually in docs or tests, not in src/.
 """
 
+import ast
 import json
 import re
 from pathlib import Path
@@ -30,6 +31,26 @@ def test_make_targets_in_claude_md_exist():
 
 def test_agents_md_points_to_claude_md():
     assert "CLAUDE.md" in (ROOT / "AGENTS.md").read_text()
+
+
+def test_tool_layer_does_not_import_database_drivers():
+    paths = [ROOT / "src" / "car_agent" / "schemas.py"]
+    paths.extend((ROOT / "src" / "car_agent" / "tools").glob("*.py"))
+    for path in paths:
+        tree = ast.parse(path.read_text())
+        drivers = {
+            alias.name
+            for node in ast.walk(tree)
+            if isinstance(node, ast.Import)
+            for alias in node.names
+            if alias.name in {"sqlite3", "psycopg"}
+        }
+        drivers.update(
+            node.module
+            for node in ast.walk(tree)
+            if isinstance(node, ast.ImportFrom) and node.module in {"sqlite3", "psycopg"}
+        )
+        assert not drivers, f"{path.relative_to(ROOT)} imports database driver(s): {drivers}"
 
 
 @pytest.mark.parametrize("spec", TOOLS, ids=lambda s: s.name)
