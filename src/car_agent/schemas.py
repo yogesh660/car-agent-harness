@@ -2,10 +2,11 @@
 
 from __future__ import annotations
 
-import sqlite3
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
+
+from car_agent.db import DataRow
 
 Fuel = Literal["petrol", "diesel", "hybrid", "electric"]
 Body = Literal["hatchback", "saloon", "estate", "suv"]
@@ -71,5 +72,6 @@ class Listing(BaseModel):
     city: str
 
     @classmethod
-    def from_row(cls, row: sqlite3.Row) -> Listing:
-        return cls.model_validate(dict(row))
+    def from_row(cls, row: DataRow) -> Listing:
+        keys = row.keys()
+        return cls.model_validate({key: row[key] for key in keys})

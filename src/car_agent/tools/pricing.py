@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-import sqlite3
 import statistics
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from car_agent.db import ReadConnection
 from car_agent.schemas import Listing, normalize_make
 
 MIN_COMPARABLES = 5
@@ -67,7 +67,7 @@ class PriceEstimate(BaseModel):
 
 
 def _comparable_prices(
-    conn: sqlite3.Connection,
+    conn: ReadConnection,
     make: str,
     model: str,
     year: int,
@@ -89,7 +89,7 @@ def _comparable_prices(
     return None
 
 
-def estimate_price(conn: sqlite3.Connection, params: EstimatePriceInput) -> PriceEstimate:
+def estimate_price(conn: ReadConnection, params: EstimatePriceInput) -> PriceEstimate:
     asking: int | None
     if params.listing_id is not None:
         row = conn.execute("SELECT * FROM listings WHERE id = ?", [params.listing_id]).fetchone()

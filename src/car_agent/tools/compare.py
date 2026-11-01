@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import sqlite3
-
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from car_agent.db import ReadConnection
 from car_agent.schemas import MARKET_YEAR, Listing
 from car_agent.tools.pricing import EstimatePriceInput, PriceEstimate, estimate_price
 
@@ -46,9 +45,7 @@ class CompareListingsOutput(BaseModel):
     )
 
 
-def compare_listings(
-    conn: sqlite3.Connection, params: CompareListingsInput
-) -> CompareListingsOutput:
+def compare_listings(conn: ReadConnection, params: CompareListingsInput) -> CompareListingsOutput:
     placeholders = ", ".join("?" for _ in params.listing_ids)
     rows = conn.execute(
         f"SELECT * FROM listings WHERE id IN ({placeholders})", params.listing_ids
